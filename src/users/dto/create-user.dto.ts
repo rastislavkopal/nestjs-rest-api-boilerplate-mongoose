@@ -1,32 +1,42 @@
-// import { Transform } from 'class-transformer';
+import {
+  IsEmail,
+  IsNotEmpty,
+  MinLength,
+  MaxLength,
+  Validate,
+} from 'class-validator';
+import { Transform } from 'class-transformer';
 import { ApiProperty } from '@nestjs/swagger';
-import { IsEmail, IsNotEmpty, MinLength } from 'class-validator';
+import { lowerCaseTransformer } from 'src/utils/transformers/lower-case.transformer';
+import { UniqueValidator } from 'src/utils/validators/unique-validator';
 
 export class CreateUserDto {
-  @ApiProperty({ example: 'test1@example.com' })
-  // @Transform(lowerCaseTransformer)
+  @ApiProperty({ example: 'test@test.com' })
+  @Transform(lowerCaseTransformer)
   @IsNotEmpty()
-  // @Validate(IsNotExist, ['User'], {
-  //   message: 'emailAlreadyExists',
-  // })
+  @Validate(UniqueValidator, ['email'], {
+    message: 'emailAlreadyExists',
+  })
   @IsEmail()
-  email: string | null;
+  email: string;
 
-  @ApiProperty()
+  @ApiProperty({ example: 'test123' })
   @MinLength(6)
+  @MaxLength(128)
   password?: string;
 
   @ApiProperty({ example: 'John' })
   @IsNotEmpty()
-  firstName: string | null;
+  @MaxLength(128)
+  firstName: string;
 
   @ApiProperty({ example: 'Doe' })
   @IsNotEmpty()
-  lastName: string | null;
+  lastName: string;
 
-  // @ApiProperty({ type: Role })
+  @ApiProperty({ example: 'user' })
   // @Validate(IsExist, ['Role', 'id'], {
   //   message: 'roleNotExists',
   // })
-  // role?: Role | null;
+  role: string | null;
 }
