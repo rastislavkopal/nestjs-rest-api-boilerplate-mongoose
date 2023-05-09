@@ -3,10 +3,10 @@ import {
   ValidatorConstraintInterface,
 } from 'class-validator';
 import { Model } from 'mongoose';
-import { InjectModel, getModelToken } from '@nestjs/mongoose';
+import { InjectModel } from '@nestjs/mongoose';
 import { User } from 'src/users/schemas/user.schema';
 import { ValidationArguments } from 'class-validator/types/validation/ValidationArguments';
-import { Injectable, Logger } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 
 @Injectable()
 @ValidatorConstraint({ name: 'UniqueValidator', async: true })
@@ -20,7 +20,7 @@ export class UniqueValidator implements ValidatorConstraintInterface {
     return !count;
   }
 
-  defaultMessage(_args: ValidationArguments) {
-    return '$(value) is already taken';
+  defaultMessage(args: ValidationArguments) {
+    return `${args[0]} is already taken`;
   }
 }
