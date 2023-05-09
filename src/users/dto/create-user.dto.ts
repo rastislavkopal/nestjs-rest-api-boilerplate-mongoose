@@ -7,8 +7,8 @@ import {
 } from 'class-validator';
 import { Transform } from 'class-transformer';
 import { ApiProperty } from '@nestjs/swagger';
-import { lowerCaseTransformer } from 'src/utils/transformers/lower-case.transformer';
-import { UniqueValidator } from 'src/utils/validators/unique-validator';
+import { UniqueValidator } from '../../utils/validators/unique-validator';
+import { lowerCaseTransformer } from '../../utils/transformers/lower-case.transformer';
 
 export class CreateUserDto {
   @ApiProperty({ example: 'test@test.com' })
