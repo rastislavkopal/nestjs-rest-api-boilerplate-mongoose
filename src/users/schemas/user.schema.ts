@@ -1,17 +1,18 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { HydratedDocument } from 'mongoose';
+import { now, HydratedDocument } from 'mongoose';
 // import * as mongoose from 'mongoose';
 // import { Article } from '../articles/schemas/article.schema';
-// import { Exclude, Expose } from 'class-transformer';
+import { Exclude } from 'class-transformer';
 
 export type UserDocument = HydratedDocument<User>;
 
-@Schema()
+@Schema({ timestamps: true })
 export class User {
   @Prop({ required: true, unique: true, minlength: 6, maxlength: 255 })
   email: string;
 
   @Prop({ required: true })
+  @Exclude()
   password: string;
 
   name: string;
@@ -22,11 +23,18 @@ export class User {
   @Prop({ required: true })
   lastName: string;
 
-  @Prop({ default: 'user', required: true })
-  role: string;
+  @Prop({ type: [String], default: ['user'], required: true })
+  roles: string;
 
   @Prop()
   picture: string;
+
+  @Prop({ default: false })
+  verified: boolean;
+
+  @Prop({ default: 0 })
+  @Exclude()
+  loginAttempts: number;
 
   @Prop()
   invitedBy: string;
@@ -42,12 +50,12 @@ export class User {
 
   @Prop({ default: 1 })
   level: number;
+
+  @Prop({ default: now() })
+  createdAt: Date;
+
+  @Prop({ default: now() })
+  updatedAt: Date;
 }
 
-const UserSchema = SchemaFactory.createForClass(User);
-
-UserSchema.virtual('name').get(function (this: UserDocument) {
-  return `${this.firstName} ${this.lastName}`;
-});
-
-export { UserSchema };
+export const UserSchema = SchemaFactory.createForClass(User);

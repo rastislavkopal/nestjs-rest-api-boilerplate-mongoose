@@ -1,11 +1,11 @@
 import {
-  ClassSerializerInterceptor,
+  // ClassSerializerInterceptor,
   ValidationPipe,
   VersioningType,
 } from '@nestjs/common';
 import mongoose from 'mongoose';
 import { AppModule } from './app.module';
-import { NestFactory, Reflector } from '@nestjs/core';
+import { NestFactory } from '@nestjs/core';
 import { ConfigService } from '@nestjs/config';
 import { useContainer } from 'class-validator';
 import { AllConfigType } from './config/config.type';
@@ -28,7 +28,7 @@ async function bootstrap() {
     type: VersioningType.URI,
   });
   app.useGlobalPipes(new ValidationPipe(validationOptions));
-  app.useGlobalInterceptors(new ClassSerializerInterceptor(app.get(Reflector)));
+  // app.useGlobalInterceptors(new ClassSerializerInterceptor(app.get(Reflector)));
 
   const config = new DocumentBuilder()
     .setTitle('API')
@@ -46,7 +46,7 @@ async function bootstrap() {
       'development',
   );
 
-  await app.listen(3000);
+  await app.listen(configService.getOrThrow('app.port', { infer: true }));
 }
 
 bootstrap();
