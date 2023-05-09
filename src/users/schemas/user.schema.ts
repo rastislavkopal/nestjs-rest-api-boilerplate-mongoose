@@ -1,13 +1,17 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { now, HydratedDocument } from 'mongoose';
+import { now, HydratedDocument, ObjectId } from 'mongoose';
 // import * as mongoose from 'mongoose';
 // import { Article } from '../articles/schemas/article.schema';
-import { Exclude } from 'class-transformer';
+import { Exclude, Expose, Transform } from 'class-transformer';
 
 export type UserDocument = HydratedDocument<User>;
 
 @Schema({ timestamps: true })
 export class User {
+  @Expose()
+  @Transform((params) => params.obj._id.toString())
+  _id: ObjectId;
+
   @Prop({ required: true, unique: true, minlength: 6, maxlength: 255 })
   email: string;
 

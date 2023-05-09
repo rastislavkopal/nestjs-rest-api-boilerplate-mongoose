@@ -5,8 +5,6 @@ import {
   HttpStatus,
   Get,
   Query,
-  DefaultValuePipe,
-  ParseIntPipe,
   ParseUUIDPipe,
   Param,
   UseInterceptors,
@@ -18,6 +16,7 @@ import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { NullableType } from '../utils/types/nullable.type';
 import MongooseClassSerializerInterceptor from '../utils/interceptors/mongoose-class-serializer.interceptor';
+import { PaginationParams } from 'src/utils/types/pagination-params';
 
 @ApiTags('Users')
 @Controller({
@@ -42,29 +41,13 @@ export class UsersController {
   // })
   @Get()
   @HttpCode(HttpStatus.OK)
-  @ApiQuery({
-    name: 'page',
-    required: false,
-    type: Number,
-    example: 1,
-  })
-  @ApiQuery({
-    name: 'limit',
-    required: false,
-    type: Number,
-    example: 10,
-  })
-  async findAll(
-    @Query('page', new DefaultValuePipe(1), ParseIntPipe) page: number,
-    @Query('limit', new DefaultValuePipe(10), ParseIntPipe) limit: number,
-  ): Promise<User[]> {
+  @ApiQuery({ name: 'page', required: false, type: Number, example: 1 })
+  @ApiQuery({ name: 'limit', required: false, type: Number, example: 10 })
+  async findAll(@Query() { page, limit }: PaginationParams): Promise<User[]> {
     if (limit > 50) {
       limit = 50;
     }
-    const users = await this.usersService.findManyWithPagination({
-      page,
-      limit,
-    });
+    const users = await this.usersService.findManyWithPagination(page, limit);
     return users;
   }
 
