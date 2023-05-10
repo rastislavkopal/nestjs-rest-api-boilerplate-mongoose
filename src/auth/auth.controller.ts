@@ -10,7 +10,7 @@ import {
   // UseInterceptors,
 } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
-import { User } from 'src/users/schemas/user.schema';
+// import { User } from 'src/users/schemas/user.schema';
 import { AuthService } from './auth.service';
 import { JwtAuthGuard } from './guards/jwt-auth.guard';
 import { AuthEmailLoginDto } from './dto/auth-email-login.dto';
