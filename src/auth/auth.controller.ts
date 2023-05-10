@@ -12,12 +12,11 @@ import {
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { AuthService } from './auth.service';
 import { User } from 'src/users/schemas/user.schema';
-import { JwtAuthGuard } from './guards/jwt-auth.guard';
 import { AuthEmailLoginDto } from './dto/auth-email-login.dto';
-import { LoginResponseType } from 'src/utils/types/auth/login-response.type';
+import { AuthResponseType } from 'src/utils/types/auth/auth-response.type';
 import MongooseClassSerializerInterceptor from '../utils/interceptors/mongoose-class-serializer.interceptor';
 import { RolesGuard } from 'src/auth/guards/roles.guard';
-import { Roles } from './decorators/roles.decorator';
+import { RegisterUserDto } from './dto/register-user.dto';
 
 @ApiTags('Auth')
 @Controller({
@@ -28,12 +27,18 @@ import { Roles } from './decorators/roles.decorator';
 export class AuthController {
   constructor(private authService: AuthService) {}
 
-  @Post('email/login')
+  @Post('register')
+  @HttpCode(HttpStatus.CREATED)
+  register(
+    @Body() registerUserDto: RegisterUserDto,
+  ): Promise<AuthResponseType> {
+    return this.authService.register(registerUserDto);
+  }
+
+  @Post('login')
   @HttpCode(HttpStatus.OK)
-  public login(
-    @Body() loginDto: AuthEmailLoginDto,
-  ): Promise<LoginResponseType> {
-    return this.authService.validateLogin(loginDto, false);
+  public login(@Body() loginDto: AuthEmailLoginDto): Promise<AuthResponseType> {
+    return this.authService.login(loginDto, false);
   }
 
   @ApiBearerAuth()

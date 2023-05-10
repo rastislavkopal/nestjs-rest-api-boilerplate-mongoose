@@ -10,7 +10,7 @@ import { ApiProperty } from '@nestjs/swagger';
 import { UniqueValidator } from '../../utils/validators/unique-validator';
 import { lowerCaseTransformer } from '../../utils/transformers/lower-case.transformer';
 
-export class CreateUserDto {
+export class RegisterUserDto {
   @ApiProperty({ example: 'test@gmail.com' })
   @Transform(lowerCaseTransformer)
   @IsNotEmpty()

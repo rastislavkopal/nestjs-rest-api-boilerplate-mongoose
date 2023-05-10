@@ -8,6 +8,11 @@ import { UsersModule } from 'src/users/users.module';
 import { PassportModule } from '@nestjs/passport';
 import { AuthController } from './auth.controller';
 import { UsersService } from 'src/users/users.service';
+import { MongooseModule } from '@nestjs/mongoose';
+import {
+  RefreshToken,
+  RefreshTokenSchema,
+} from './schemas/refresh-token.schema';
 
 const jwtFactory = {
   imports: [ConfigModule],
@@ -21,7 +26,14 @@ const jwtFactory = {
 };
 
 @Module({
-  imports: [UsersModule, PassportModule, JwtModule.registerAsync(jwtFactory)],
+  imports: [
+    MongooseModule.forFeature([
+      { name: RefreshToken.name, schema: RefreshTokenSchema },
+    ]),
+    UsersModule,
+    PassportModule,
+    JwtModule.registerAsync(jwtFactory),
+  ],
   providers: [
     AuthService,
     UsersService,
@@ -29,7 +41,12 @@ const jwtFactory = {
     AnonymousStrategy,
     ConfigService,
   ],
-  exports: [AuthService],
+  exports: [
+    AuthService,
+    MongooseModule.forFeature([
+      { name: RefreshToken.name, schema: RefreshTokenSchema },
+    ]),
+  ],
   controllers: [AuthController],
 })
 export class AuthModule {}

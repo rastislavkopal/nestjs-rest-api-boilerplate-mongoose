@@ -6,34 +6,71 @@ import {
   UnauthorizedException,
 } from '@nestjs/common';
 import * as bcrypt from 'bcrypt';
+import { randomBytes } from 'crypto';
 import { JwtService } from '@nestjs/jwt';
 import { UsersService } from 'src/users/users.service';
 import { AuthEmailLoginDto } from './dto/auth-email-login.dto';
-import { LoginResponseType } from 'src/utils/types/auth/login-response.type';
+import { AuthResponseType } from 'src/utils/types/auth/auth-response.type';
 import { ConfigService } from '@nestjs/config';
+import { CreateUserDto } from 'src/users/dto/create-user.dto';
+import { RefreshToken } from './schemas/refresh-token.schema';
+import { Model } from 'mongoose';
+import { InjectModel } from '@nestjs/mongoose';
+import { User } from 'src/users/schemas/user.schema';
 
 @Injectable()
 export class AuthService {
+  private jwtExpires: number;
+
   constructor(
     private jwtService: JwtService,
     private usersService: UsersService,
     private configService: ConfigService,
-  ) {}
-
-  async login(user: any) {
-    const payload = {
-      sub: user.userId,
-      roles: user.roles,
-    };
-    return {
-      access_token: this.jwtService.sign(payload),
-    };
+    @InjectModel(RefreshToken.name) private tokenModel: Model<RefreshToken>,
+  ) {
+    this.jwtExpires = this.configService.get<number>('auth.expires');
   }
 
-  async validateLogin(
+  createAccessToken(user: User): string {
+    const accessToken = this.jwtService.sign({
+      sub: user._id,
+      _id: user._id,
+      roles: user.roles,
+    });
+    return accessToken;
+  }
+
+  async createRefreshToken(user): Promise<string> {
+    const refreshToken = new this.tokenModel({
+      userId: user._id,
+      token: `${user._id}.${randomBytes(40).toString('hex')}`,
+    });
+    await refreshToken.save();
+    return refreshToken.token;
+  }
+
+  async findRefreshToken(user: User): Promise<string> {
+    const refreshToken = await this.tokenModel.findOne({ userId: user._id });
+    if (!refreshToken) {
+      throw new UnauthorizedException('User has been logged out.');
+    }
+    return refreshToken.token;
+  }
+
+  async authTokenResponse(user) {
+    const token = {
+      tokenType: 'Bearer',
+      accessToken: await this.createAccessToken(user),
+      refreshToken: await this.findRefreshToken(user),
+      expiresIn: new Date(new Date().getTime() + this.jwtExpires * 60000),
+    };
+    return { token, user: null };
+  }
+
+  async login(
     loginDto: AuthEmailLoginDto,
     onlyAdmin: boolean,
-  ): Promise<LoginResponseType> {
+  ): Promise<AuthResponseType> {
     const user = await this.usersService.findByEmail(loginDto.email);
 
     if (!user) {
@@ -61,20 +98,37 @@ export class AuthService {
       );
     }
 
-    const token = {
-      tokenType: 'Bearer',
-      accessToken: this.jwtService.sign({
-        sub: user._id,
-        _id: user._id,
-        roles: user.roles,
-      }),
-      refreshToken: 'TODO',
-      expiresIn: new Date(
-        new Date().getTime() +
-          this.configService.get<number>('auth.expires') * 60000,
-      ),
-    };
-
-    return { token, user: null };
+    return this.authTokenResponse(user);
   }
+
+  async register(createUserDto: CreateUserDto): Promise<AuthResponseType> {
+    const user = await this.usersService.create(createUserDto);
+    await this.createRefreshToken(user);
+    return this.authTokenResponse(user);
+  }
+
+  // ***********************
+  // ╔╦╗╔═╗╔╦╗╦ ╦╔═╗╔╦╗╔═╗
+  // ║║║║╣  ║ ╠═╣║ ║ ║║╚═╗
+  // ╩ ╩╚═╝ ╩ ╩ ╩╚═╝═╩╝╚═╝
+  // ***********************
+  // returnJwtExtractor() {
+  //   return this.jwtExtractor;
+  // }
+
+  // getIp(req: Request): string {
+  //   return getClientIp(req);
+  // }
+
+  // getBrowserInfo(req: Request): string {
+  //   return req.header['user-agent'] || 'XX';
+  // }
+
+  // getCountry(req: Request): string {
+  //   return req.header['cf-ipcountry'] ? req.header['cf-ipcountry'] : 'XX';
+  // }
+
+  // encryptText(text: string): string {
+  //   return this.cryptr.encrypt(text);
+  // }
 }
