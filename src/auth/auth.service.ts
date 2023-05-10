@@ -65,6 +65,7 @@ export class AuthService {
       tokenType: 'Bearer',
       accessToken: this.jwtService.sign({
         sub: user._id,
+        _id: user._id,
         roles: user.roles,
       }),
       refreshToken: 'TODO',

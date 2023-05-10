@@ -5,12 +5,15 @@ import { PassportStrategy } from '@nestjs/passport';
 import { ConfigService } from '@nestjs/config';
 import { JwtPayloadType } from '../../utils/types/auth/jwt-payload.type';
 import { OrNeverType } from '../../utils/types/or-never.type';
+import { UsersService } from 'src/users/users.service';
+import { User } from 'src/users/schemas/user.schema';
 
 @Injectable()
 export class JwtStrategy extends PassportStrategy(Strategy) {
   constructor(
     private jwtService: JwtService,
     private configService: ConfigService,
+    private usersService: UsersService,
   ) {
     super({
       jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
@@ -19,11 +22,12 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
     });
   }
 
-  public validate(payload: JwtPayloadType): OrNeverType<JwtPayloadType> {
+  public async validate(payload: JwtPayloadType): Promise<OrNeverType<User>> {
     if (!payload._id) {
       throw new UnauthorizedException();
     }
 
-    return payload;
+    const user = await this.usersService.findOne({ _id: payload._id });
+    return user;
   }
 }

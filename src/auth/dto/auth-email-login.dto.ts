@@ -5,7 +5,7 @@ import { Transform } from 'class-transformer';
 import { lowerCaseTransformer } from 'src/utils/transformers/lower-case.transformer';
 
 export class AuthEmailLoginDto {
-  @ApiProperty({ example: 'test@test.com' })
+  @ApiProperty({ example: 'test@gmail.com' })
   @Transform(lowerCaseTransformer)
   @IsNotEmpty()
   // @Validate(DoesExist, ['User'], {

@@ -14,6 +14,10 @@ export class UsersService {
     return createdUser.save();
   }
 
+  async findOne(query: object): Promise<NullableType<User>> {
+    return this.userModel.findOne(query);
+  }
+
   async findByEmail(email: string): Promise<NullableType<User>> {
     return this.userModel.findOne({ email }).exec();
   }

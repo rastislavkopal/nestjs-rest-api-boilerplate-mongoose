@@ -9,8 +9,7 @@ import {
   UseGuards,
   // UseInterceptors,
 } from '@nestjs/common';
-import { ApiTags } from '@nestjs/swagger';
-// import { User } from 'src/users/schemas/user.schema';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { AuthService } from './auth.service';
 import { JwtAuthGuard } from './guards/jwt-auth.guard';
 import { AuthEmailLoginDto } from './dto/auth-email-login.dto';
@@ -34,6 +33,7 @@ export class AuthController {
     return this.authService.validateLogin(loginDto, false);
   }
 
+  @ApiBearerAuth()
   @UseGuards(JwtAuthGuard)
   @Get('profile')
   getProfile(@Request() req) {

@@ -11,7 +11,7 @@ import { UniqueValidator } from '../../utils/validators/unique-validator';
 import { lowerCaseTransformer } from '../../utils/transformers/lower-case.transformer';
 
 export class CreateUserDto {
-  @ApiProperty({ example: 'test@test.com' })
+  @ApiProperty({ example: 'test@gmail.com' })
   @Transform(lowerCaseTransformer)
   @IsNotEmpty()
   @Validate(UniqueValidator, ['email'], {
