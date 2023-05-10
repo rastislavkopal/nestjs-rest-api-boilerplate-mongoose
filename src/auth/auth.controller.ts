@@ -7,21 +7,24 @@ import {
   Post,
   Request,
   UseGuards,
-  // UseInterceptors,
+  UseInterceptors,
 } from '@nestjs/common';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { AuthService } from './auth.service';
+import { User } from 'src/users/schemas/user.schema';
 import { JwtAuthGuard } from './guards/jwt-auth.guard';
 import { AuthEmailLoginDto } from './dto/auth-email-login.dto';
 import { LoginResponseType } from 'src/utils/types/auth/login-response.type';
-// import MongooseClassSerializerInterceptor from '../utils/interceptors/mongoose-class-serializer.interceptor';
+import MongooseClassSerializerInterceptor from '../utils/interceptors/mongoose-class-serializer.interceptor';
+import { RolesGuard } from 'src/auth/guards/roles.guard';
+import { Roles } from './decorators/roles.decorator';
 
 @ApiTags('Auth')
 @Controller({
   path: 'auth',
   version: '1',
 })
-// @UseInterceptors(MongooseClassSerializerInterceptor(User))
+@UseInterceptors(MongooseClassSerializerInterceptor(User))
 export class AuthController {
   constructor(private authService: AuthService) {}
 
@@ -34,9 +37,11 @@ export class AuthController {
   }
 
   @ApiBearerAuth()
-  @UseGuards(JwtAuthGuard)
+  // @UseGuards(JwtAuthGuard)
+  @UseGuards(RolesGuard)
+  // @Roles('user')
   @Get('profile')
-  getProfile(@Request() req) {
+  getProfile(@Request() req): User {
     return req.user;
   }
 }
