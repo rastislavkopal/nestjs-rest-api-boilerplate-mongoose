@@ -1,7 +1,6 @@
+import * as bcrypt from 'bcrypt';
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { now, HydratedDocument, ObjectId } from 'mongoose';
-// import * as mongoose from 'mongoose';
-// import { Article } from '../articles/schemas/article.schema';
 import { Exclude, Expose, Transform } from 'class-transformer';
 
 export type UserDocument = HydratedDocument<User>;
@@ -19,7 +18,10 @@ export class User {
   @Exclude()
   password: string;
 
-  name: string;
+  @Expose()
+  get name(): string {
+    return `${this.firstName} ${this.lastName}`;
+  }
 
   @Prop({ required: true })
   firstName: string;
@@ -63,3 +65,18 @@ export class User {
 }
 
 export const UserSchema = SchemaFactory.createForClass(User);
+
+UserSchema.pre('save', async function save(next) {
+  try {
+    if (!this.isModified('password')) return next();
+
+    const rounds = 10;
+
+    const hash = await bcrypt.hash(this.password, rounds);
+    this.password = hash;
+
+    return next();
+  } catch (error) {
+    return next(error);
+  }
+});

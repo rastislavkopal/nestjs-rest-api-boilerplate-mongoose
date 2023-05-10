@@ -3,6 +3,7 @@ import { UsersModule } from './users/users.module';
 import { MongooseModule } from '@nestjs/mongoose';
 import { UniqueValidator } from './utils/validators/unique-validator';
 import { ConfigModule, ConfigService } from '@nestjs/config';
+import { AuthModule } from './auth/auth.module';
 import mongoConfig from './config/mongo.config';
 import authConfig from './config/auth.config';
 import appConfig from './config/app.config';
@@ -22,6 +23,7 @@ import appConfig from './config/app.config';
         uri: configService.getOrThrow<string>('mongo.uri'),
       }),
     }),
+    AuthModule,
   ],
   controllers: [],
   providers: [UniqueValidator],
