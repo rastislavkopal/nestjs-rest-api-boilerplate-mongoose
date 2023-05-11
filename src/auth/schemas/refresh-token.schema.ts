@@ -12,11 +12,14 @@ export class RefreshToken {
 
   @Expose()
   @Transform((params) => params.obj.userId.toString())
-  @Prop({ type: { type: Types.ObjectId, ref: 'User' } })
+  @Prop({ type: Types.ObjectId, ref: 'User', required: true })
   userId: ObjectId;
 
+  @Prop({ required: true, unique: true })
+  email: string;
+
   @Prop({ required: true })
-  token: string;
+  refreshToken: string;
 
   // @Prop()
   // ip: string;

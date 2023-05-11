@@ -1,4 +1,5 @@
 import {
+  BadRequestException,
   HttpException,
   HttpStatus,
   Injectable,
@@ -17,6 +18,7 @@ import { RefreshToken } from './schemas/refresh-token.schema';
 import { Model } from 'mongoose';
 import { InjectModel } from '@nestjs/mongoose';
 import { User } from 'src/users/schemas/user.schema';
+import { RefreshTokenDto } from './dto/refresh-token.dto';
 
 @Injectable()
 export class AuthService {
@@ -31,7 +33,7 @@ export class AuthService {
     this.jwtExpires = this.configService.get<number>('auth.expires');
   }
 
-  createAccessToken(user: User): string {
+  async createAccessToken(user: User): Promise<string> {
     const accessToken = this.jwtService.sign({
       sub: user._id,
       _id: user._id,
@@ -43,18 +45,22 @@ export class AuthService {
   async createRefreshToken(user): Promise<string> {
     const refreshToken = new this.tokenModel({
       userId: user._id,
-      token: `${user._id}.${randomBytes(40).toString('hex')}`,
+      refreshToken: `${user._id}.${randomBytes(40).toString('hex')}`,
+      email: user.email,
     });
     await refreshToken.save();
-    return refreshToken.token;
+    return refreshToken.refreshToken;
   }
 
   async findRefreshToken(user: User): Promise<string> {
-    const refreshToken = await this.tokenModel.findOne({ userId: user._id });
+    const refreshToken = await this.tokenModel.findOne({
+      userId: user._id,
+      email: user.email,
+    });
     if (!refreshToken) {
       throw new UnauthorizedException('User has been logged out.');
     }
-    return refreshToken.token;
+    return refreshToken.refreshToken;
   }
 
   async authTokenResponse(user) {
@@ -104,6 +110,24 @@ export class AuthService {
   async register(createUserDto: CreateUserDto): Promise<AuthResponseType> {
     const user = await this.usersService.create(createUserDto);
     await this.createRefreshToken(user);
+    return this.authTokenResponse(user);
+  }
+
+  async refreshAccessToken(
+    refreshTokenDto: RefreshTokenDto,
+  ): Promise<AuthResponseType> {
+    const refreshToken = await this.tokenModel.findOne({
+      email: refreshTokenDto.email,
+      refreshToken: refreshTokenDto.refreshToken,
+    });
+    if (!refreshToken) {
+      throw new BadRequestException('Bad request');
+    }
+    const user = await this.usersService.findOne({ _id: refreshToken.userId });
+    if (!user) {
+      throw new BadRequestException('Bad request');
+    }
+
     return this.authTokenResponse(user);
   }
 
