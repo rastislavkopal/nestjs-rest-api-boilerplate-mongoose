@@ -14,7 +14,10 @@ import { AuthEmailLoginDto } from './dto/auth-email-login.dto';
 import { AuthResponseType } from 'src/utils/types/auth/auth-response.type';
 import { ConfigService } from '@nestjs/config';
 import { CreateUserDto } from 'src/users/dto/create-user.dto';
-import { RefreshToken } from './schemas/refresh-token.schema';
+import {
+  RefreshToken,
+  RefreshTokenDocument,
+} from './schemas/refresh-token.schema';
 import { Model } from 'mongoose';
 import { InjectModel } from '@nestjs/mongoose';
 import { User } from 'src/users/schemas/user.schema';
@@ -34,7 +37,7 @@ export class AuthService {
   }
 
   async createAccessToken(user: User): Promise<string> {
-    const accessToken = this.jwtService.sign({
+    const accessToken: string = this.jwtService.sign({
       sub: user._id,
       _id: user._id,
       roles: user.roles,
@@ -42,8 +45,8 @@ export class AuthService {
     return accessToken;
   }
 
-  async createRefreshToken(user): Promise<string> {
-    const refreshToken = new this.tokenModel({
+  async createRefreshToken(user: User): Promise<string> {
+    const refreshToken: RefreshTokenDocument = new this.tokenModel({
       userId: user._id,
       refreshToken: `${user._id}.${randomBytes(40).toString('hex')}`,
       email: user.email,
@@ -53,7 +56,7 @@ export class AuthService {
   }
 
   async findRefreshToken(user: User): Promise<string> {
-    const refreshToken = await this.tokenModel.findOne({
+    const refreshToken: RefreshToken = await this.tokenModel.findOne({
       userId: user._id,
       email: user.email,
     });
@@ -63,21 +66,24 @@ export class AuthService {
     return refreshToken.refreshToken;
   }
 
-  async authTokenResponse(user) {
-    const token = {
-      tokenType: 'Bearer',
-      accessToken: await this.createAccessToken(user),
-      refreshToken: await this.findRefreshToken(user),
-      expiresIn: new Date(new Date().getTime() + this.jwtExpires * 60000),
+  async authTokenResponse(user: User) {
+    const tokenRes: AuthResponseType = {
+      token: {
+        tokenType: 'Bearer',
+        accessToken: await this.createAccessToken(user),
+        refreshToken: await this.findRefreshToken(user),
+        expiresIn: new Date(new Date().getTime() + this.jwtExpires * 60000),
+      },
+      user: null,
     };
-    return { token, user: null };
+    return tokenRes;
   }
 
   async login(
     loginDto: AuthEmailLoginDto,
     onlyAdmin: boolean,
   ): Promise<AuthResponseType> {
-    const user = await this.usersService.findByEmail(loginDto.email);
+    const user: User = await this.usersService.findByEmail(loginDto.email);
 
     if (!user) {
       throw new NotFoundException('Email not found');
@@ -87,7 +93,7 @@ export class AuthService {
       throw new UnauthorizedException('Not enough permissions');
     }
 
-    const isValidPassword = await bcrypt.compare(
+    const isValidPassword: boolean = await bcrypt.compare(
       loginDto.password,
       user.password,
     );
@@ -108,7 +114,7 @@ export class AuthService {
   }
 
   async register(createUserDto: CreateUserDto): Promise<AuthResponseType> {
-    const user = await this.usersService.create(createUserDto);
+    const user: User = await this.usersService.create(createUserDto);
     await this.createRefreshToken(user);
     return this.authTokenResponse(user);
   }
@@ -116,14 +122,16 @@ export class AuthService {
   async refreshAccessToken(
     refreshTokenDto: RefreshTokenDto,
   ): Promise<AuthResponseType> {
-    const refreshToken = await this.tokenModel.findOne({
+    const refreshToken: RefreshToken = await this.tokenModel.findOne({
       email: refreshTokenDto.email,
       refreshToken: refreshTokenDto.refreshToken,
     });
     if (!refreshToken) {
       throw new BadRequestException('Bad request');
     }
-    const user = await this.usersService.findOne({ _id: refreshToken.userId });
+    const user: User = await this.usersService.findOne({
+      _id: refreshToken.userId,
+    });
     if (!user) {
       throw new BadRequestException('Bad request');
     }

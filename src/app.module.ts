@@ -15,7 +15,6 @@ import appConfig from './config/app.config';
       load: [appConfig, authConfig, mongoConfig],
       envFilePath: ['.env'],
     }),
-    UsersModule,
     MongooseModule.forRootAsync({
       imports: [ConfigModule],
       inject: [ConfigService],
@@ -24,6 +23,7 @@ import appConfig from './config/app.config';
       }),
     }),
     AuthModule,
+    UsersModule,
   ],
   controllers: [],
   providers: [UniqueValidator],
