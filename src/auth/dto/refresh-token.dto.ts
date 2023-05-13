@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsNotEmpty, IsEmail } from 'class-validator';
+import { IsNotEmpty, IsEmail, IsString } from 'class-validator';
 import { Transform } from 'class-transformer';
 import { lowerCaseTransformer } from '../../utils/transformers/lower-case.transformer';
 
@@ -21,6 +21,7 @@ export class RefreshTokenDto {
     example:
       'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI2NDViYzU3Y2E5ZjMxYjljYmIyZjg2NWYiLCJfaWQiOiI2NDViYzU3Y2E5ZjMxYjljYmIyZjg2NWYiLCJyb2xlcyI6WyJ1c2VyIl0sImlhdCI6MTY4MzczNTkzMiwiZXhwIjoxNjgzOTE1OTMyfQ.29IdrDWlqs2eWU9V8uiU8VieduGfNz6hBzRfRU_Dlu0',
   })
+  @IsString()
   @IsNotEmpty()
   refreshToken: string;
 }

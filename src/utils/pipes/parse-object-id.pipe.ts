@@ -1,4 +1,8 @@
-import { PipeTransform, Injectable, BadRequestException } from '@nestjs/common';
+import {
+  PipeTransform,
+  Injectable,
+  UnprocessableEntityException,
+} from '@nestjs/common';
 import { ObjectId } from 'mongodb';
 
 /**
@@ -20,7 +24,9 @@ export class ParseObjectIdPipe implements PipeTransform<any, ObjectId> {
       const transformedObjectId: ObjectId = ObjectId.createFromHexString(value);
       return transformedObjectId;
     } catch (error) {
-      throw new BadRequestException('Validation failed (ObjectId is expected)');
+      throw new UnprocessableEntityException(
+        'Validation failed (ObjectId is expected)',
+      );
     }
   }
 }

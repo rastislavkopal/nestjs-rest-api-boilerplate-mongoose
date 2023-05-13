@@ -21,8 +21,8 @@ import { AuthEmailLoginDto } from './dto/auth-email-login.dto';
 import { AuthResponseType } from 'src/utils/types/auth/auth-response.type';
 import MongooseClassSerializerInterceptor from '../utils/interceptors/mongoose-class-serializer.interceptor';
 import { RolesGuard } from 'src/auth/guards/roles.guard';
-import { RegisterUserDto } from './dto/register-user.dto';
 import { RefreshTokenDto } from './dto/refresh-token.dto';
+import { CreateUserDto } from 'src/users/dto/create-user.dto';
 
 @ApiTags('Auth')
 @Controller({
@@ -35,10 +35,8 @@ export class AuthController {
 
   @Post('register')
   @HttpCode(HttpStatus.CREATED)
-  register(
-    @Body() registerUserDto: RegisterUserDto,
-  ): Promise<AuthResponseType> {
-    return this.authService.register(registerUserDto);
+  register(@Body() createUserDto: CreateUserDto): Promise<AuthResponseType> {
+    return this.authService.register(createUserDto);
   }
 
   @Post('login')
