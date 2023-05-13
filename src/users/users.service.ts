@@ -1,15 +1,14 @@
 import { _, omit } from 'lodash';
 import { Model, Types } from 'mongoose';
-import { Injectable, Logger, NotFoundException } from '@nestjs/common';
+import { Injectable, NotFoundException, Scope } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { User, UserDocument } from './schemas/user.schema';
 import { CreateUserDto } from './dto/create-user.dto';
 import { NullableType } from 'src/utils/types/nullable.type';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { ReplaceUserDto } from './dto/replace-user.dto';
-import { plainToClass } from 'class-transformer';
 
-@Injectable()
+@Injectable({ scope: Scope.REQUEST })
 export class UsersService {
   constructor(@InjectModel(User.name) private userModel: Model<User>) {}
 
@@ -38,32 +37,38 @@ export class UsersService {
       .exec();
   }
 
-  async update(user: User, updateUserDto: UpdateUserDto): Promise<User> {
+  async update(
+    _id: Types.ObjectId,
+    user: User,
+    updateUserDto: UpdateUserDto,
+  ): Promise<User> {
     const ommitRoles: string = _.includes(user.roles, 'admin') ? 'roles' : '';
     updateUserDto = omit(updateUserDto, ommitRoles);
 
     const updatedUser: User = await this.userModel.findByIdAndUpdate(
-      user._id,
+      _id,
       updateUserDto,
       {
         returnOriginal: false,
       },
     );
     if (!updatedUser) {
-      throw new NotFoundException(`Student #${user._id} not found`);
+      throw new NotFoundException(`User #${user._id} not found`);
     }
     return updatedUser;
   }
 
-  // TODO .. not really working :)
-  async replace(user: User, replaceUserDto: ReplaceUserDto): Promise<User> {
-    const ommitRoles: string = _.includes(user.roles, 'admin') ? 'roles' : '';
-    const newUser: User = plainToClass(User, replaceUserDto);
-    const newUserObject: User = omit(newUser, '_id', ommitRoles);
-    Logger.log(newUserObject);
-    return this.userModel.findOneAndReplace({ _id: user._id }, newUserObject, {
+  async replace(
+    _id: Types.ObjectId,
+    user: User,
+    userDto: ReplaceUserDto,
+  ): Promise<User> {
+    if (!_.includes(user.roles, 'admin')) userDto = omit(userDto, 'roles');
+
+    return await this.userModel.findByIdAndUpdate(_id, userDto, {
       override: true,
       upsert: true,
+      returnOriginal: false,
     });
   }
 
