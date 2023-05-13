@@ -37,7 +37,7 @@ import { Types } from 'mongoose';
 import { ReplaceUserDto } from './dto/replace-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { Response } from 'express';
-import { LoggedUser } from './decorators/req-user-param.decorator';
+import { LoggedUser } from './decorators/logged-user.decorator';
 
 @ApiTags('Users')
 @Controller({
