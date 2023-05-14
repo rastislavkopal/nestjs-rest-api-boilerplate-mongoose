@@ -1,4 +1,4 @@
-import { Module, forwardRef } from '@nestjs/common';
+import { Module } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { JwtModule } from '@nestjs/jwt';
 import { ConfigModule, ConfigService } from '@nestjs/config';
@@ -30,7 +30,7 @@ const jwtFactory = {
     MongooseModule.forFeature([
       { name: RefreshToken.name, schema: RefreshTokenSchema },
     ]),
-    forwardRef(() => UsersModule),
+    UsersModule,
     PassportModule,
     JwtModule.registerAsync(jwtFactory),
   ],

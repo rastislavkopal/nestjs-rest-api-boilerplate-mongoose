@@ -1,0 +1,121 @@
+@startuml
+left to right direction
+
+"Visitor" as Visitor
+"User" as User
+"Expert" as Expert
+"Journalist" as Journalist
+"Admin" as Admin
+
+package "Fact checking system" {
+
+  User --|> Visitor
+  Expert --|> User
+  Journalist --|> Expert
+  Admin --|> User
+
+  usecase UC0 as "0. Register and login user"
+
+  usecase UC1 as "1. List hottest claims"
+  note right of UC1
+    User can choose search condidition
+    for opened claims
+    - Hottest claims - all time
+    - Hottest claims - today
+    - Hottest claims - last week
+    - Hottest claims - last month
+  end note
+
+  usecase UC2 as "2. List hottest articles"
+
+  usecase UC2_1 as "2.1 Select claim and show reviews"
+
+  usecase UC3 as "3. Add new article to system"
+  note right of UC3
+    User might use automatic
+    web-scrapping feature to load text
+  end note
+  
+  usecase UC4 as "4. Add claim"
+  note right of UC4
+    User should add one or more claims
+    from previously added article
+    --
+    - Submiting claim = Start participation
+  end note
+
+  usecase UC5 as "5. Vote for existing claim (+1/-1)"
+
+  usecase UC5_1 as "5.1 Submit new review"
+  note right of UC5_1
+    Review should be in-depth analysis of a claim.
+    Participant should add relevant links, proofs
+  end note
+  
+  usecase UC5_2 as "5.2 Vote for existing review of a claim"
+  note right of UC5_2
+    Participant choose a value:
+    - True
+    - Partially true
+    - inconclusive
+    - Non-verifiable
+    - False
+  end note
+
+  usecase UC6 as "6. Search for an article/claim/user"
+
+  usecase UC8 as "8. List 'my' articles, claims and reviews"
+
+  usecase UC9 as "9. Show leaderboard"
+
+  usecase UC10 as "10. Invite user to register in system"
+  note right of UC10
+    In beta phases to have closed system
+  end note
+
+  usecase UC11 as "11. Show user profile"
+  usecase UC11_1 as "11.1 Edit profile"
+
+  usecase UC12 as "12. Save article"
+  usecase UC12_1 as "12.1 List 'my' saved articles"
+
+  usecase UC13 as "13. Expert analysis"
+  usecase UC14 as "14. Mark review as a result"
+  
+  usecase UC20 as "20. Ban user"
+  note right of UC20
+    - Resources of banned user should be
+    soft-deleted and not be showed
+    - Banned user == Visitor
+  end note
+  
+  usecase UC21 as "21. Add role to user"
+
+  
+    Visitor -- UC0
+    Visitor -- UC1
+    Visitor -- UC2
+    Visitor -- UC2_1
+    
+    User -- UC3
+    User -- UC4
+    User -- UC5
+    User -- UC5_1
+    User -- UC5_2
+    User -- UC6
+    ' User -- UC7
+    User -- UC8
+    User -- UC9
+    User -- UC10
+    User -- UC11
+    User -- UC11_1
+    User -- UC12
+    User -- UC12_1
+
+    Expert -- UC13
+    Expert -- UC14
+
+    Admin -- UC20
+    Admin -- UC21
+}
+@enduml

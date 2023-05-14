@@ -1,0 +1,85 @@
+@startuml
+
+|#goldenrod|author| Author (User)
+|#tomato|expert| Expert (Journalist)
+|#salmon|system| System (App)
+|#coral|participant| Participant (user)
+
+|author|
+start
+:Submit article;
+while (Another claim?)
+  :Add claim;
+endwhile
+:Request verification;
+|system|
+:set Deadline
+============
+(14 days - for each claim)
+Start participantion;
+|participant|
+:List claims;
+note right
+  Choose list:
+  (not yet verified)
+  ====
+  - Hottest All time
+  - Hottest today
+  - Hottest last week
+  - Hottest last month
+end note
+:Claim voting phase;
+:Select claim;
+if (submit new Review?) is (true) then
+:Submit new review 
+==============
+- Add analysis
+- Add Proofs (urls);
+else (false)
+:Vote for existing reviews
+==========================
+- Positive votes
+- Not enough info
+- Negative vote;
+endif
+|system|
+:Deadline of a claim reached
+=======================
+Close participation;
+:Reviews comparison & analysis
+==============================
+based on number of votes;
+if (Winner exists?\n (Vote-majority based)) is (false) then
+:Request expert analysis;
+|expert|
+:Submit analysis;
+else (true)
+|system|
+:Select review as the result;
+endif
+|system|
+:Give points to winner-reviewer;
+' note left
+'   winner exists
+'   Or
+'   Expert marked existing Review
+' end note
+:Close participantion
+=====================
+- Show results
+- Close request;
+-> Author request expert analysis;
+|author|
+if (Expert analysis does not exist) is (true) then
+|author|
+:Request expert-analysis;
+
+|expert|
+:Submit analysis;
+|system|
+else (false)
+
+endif
+:Show results, Close request;
+stop
+@enduml

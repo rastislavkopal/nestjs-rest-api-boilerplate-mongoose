@@ -1,0 +1,19 @@
+@startuml Point System
+
+map "**Activity and reward in points/exp**" as PointSystem {
+ Registration => 20 points
+ Once-a-day-Login => 10 points
+ Complete user-profile => 5 points per question
+ Add a flagged article => 30 points
+ Add a claim to an article => 15 points
+ Add a review to a claim => 30 points
+'  Reach a new level => 10 points
+ Appear on the top-10 leaderboard => 10 points per day
+ Invite friend to app => 30 points
+ Share fact-check => 15 points
+ Like/Dislike an user/article/claim/review => 3 points
+ Create_ New community => 100 points
+ Join a community/group => 50 points
+}
+
+@enduml
