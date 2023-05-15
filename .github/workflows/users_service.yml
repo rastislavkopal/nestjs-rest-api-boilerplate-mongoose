@@ -20,8 +20,8 @@ env:
   AUTH_JWT_SECRET: bA2xcjpf8y5aSUFsNB2qN5yymUBSs6es3qHoFpGkec75RCeBb8cpKauGefw5qy4
   AUTH_JWT_TOKEN_EXPIRES_IN: 15
   MONGO_URI: mongodb://localhost/fact_checking_api
-  MONGO_URI_TEST: mongodb://localhost/fact_checking_api
-  MONGO_DB_NAME: fact_checking_be
+  MONGO_URI_TEST: mongodb://localhost/fact_checking_api_test
+  MONGO_DB_NAME: fact_checking_api_test
   EMAIL_PORT: 587
   EMAIL_HOST: smtp-relay.sendinblue.com
   EMAIL_USERNAME: smtp-username

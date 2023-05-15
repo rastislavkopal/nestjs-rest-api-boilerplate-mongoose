@@ -2,47 +2,76 @@
   <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="200" alt="Nest Logo" /></a>
 </p>
 
-[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
-[circleci-url]: https://circleci.com/gh/nestjs/nest
+# Fact checking API
 
-  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
-    <p align="center">
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
-<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
-<a href="https://coveralls.io/github/nestjs/nest?branch=master" target="_blank"><img src="https://coveralls.io/repos/github/nestjs/nest/badge.svg?branch=master#9" alt="Coverage" /></a>
-<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
-<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg"/></a>
-    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
-  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow"></a>
-</p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
+[![users_service CI](https://github.com/rastislavkopal/fact_checking_ts/actions/workflows/users_service.yml/badge.svg)](https://github.com/rastislavkopal/fact_checking_ts/actions/workflows/users_service.yml)
 
-## Description
+## Features
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+- framework TypeScript starter repository([Nest](https://github.com/nestjs/nest))
+- ES2017 latest features like Async/Await
+<!-- - CORS enabled -->
+- Uses [npm](https://www.npmjs.com/)
+- Express + MongoDB ([Mongoose](http://mongoosejs.com/))
+- Consistent coding styles with [editorconfig](http://editorconfig.org)
+- [Docker](https://www.docker.com/) support
+<!-- - Uses [helmet](https://github.com/helmetjs/helmet) to set some HTTP headers for security
+- Load environment variables from .env files with [dotenv](https://github.com/rolodato/dotenv-safe)
+- Request validation with [joi](https://github.com/hapijs/joi)
+- Gzip compression with [compression](https://github.com/expressjs/compression)
+- Linting with [eslint](http://eslint.org)
+- Tests with [mocha](https://mochajs.org), [chai](http://chaijs.com) and [sinon](http://sinonjs.org)
+- Code coverage with [istanbul](https://istanbul.js.org) and [coveralls](https://coveralls.io) -->
+- Git hooks with [husky](https://github.com/typicode/husky)
+<!-- - Logging with [morgan](https://github.com/expressjs/morgan) -->
+- Authentication and Authorization with [passport](http://passportjs.org)
+<!-- - API documentation generation with [apidoc](http://apidocjs.com) -->
+- Continuous integration support with Github Actions
+<!-- - Monitoring with [pm2](https://github.com/Unitech/pm2) -->
 
-## Installation
+## Requirements
+
+- [Node v16.6+](https://nodejs.org/en/download/current/) or [Docker](https://www.docker.com/)
+- [npm](https://www.npmjs.com/)
+
+## Getting Started
+
+#### Install dependencies:
 
 ```bash
-$ npm install
+npm install
 ```
 
-## Running the app
+#### Set environment variables:
+
+```bash
+cp .env.example .env
+```
+
+## Running Locally
 
 ```bash
 # development
-$ npm run start
+$ npm run run start
 
 # watch mode
-$ npm run start:dev
+$ npm run run start:dev
 
 # production mode
-$ npm run start:prod
+$ npm run run start:prod
+```
+
+## Running in Production
+
+```bash
+npm run start
+```
+
+## Lint
+
+```bash
+# lint code with ESLint
+npm run lint
 ```
 
 ## Test
@@ -58,16 +87,22 @@ $ npm run test:e2e
 $ npm run test:cov
 ```
 
-## Support
+## Validate
 
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
+```bash
+# run lint and tests
+npm run lint
+```
 
-## Stay in touch
+<!-- ## Docker
 
-- Author - [Kamil Myśliwiec](https://kamilmysliwiec.com)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
+```bash
+# run container locally
+npm run docker:dev
 
-## License
+# run container in production
+npm run docker:prod
 
-Nest is [MIT licensed](LICENSE).
+# run tests
+npm run docker:test
+``` -->
