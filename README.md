@@ -39,39 +39,39 @@
 #### Install dependencies:
 
 ```bash
-npm install
+$ npm install
 ```
 
 #### Set environment variables:
 
 ```bash
-cp .env.example .env
+$ cp .env.example .env
 ```
 
 ## Running Locally
 
 ```bash
 # development
-$ npm run run start
+$ npm run start
 
 # watch mode
-$ npm run run start:dev
+$ npm run start:dev
 
 # production mode
-$ npm run run start:prod
+$ npm run start:prod
 ```
 
 ## Running in Production
 
 ```bash
-npm run start
+$ npm run start:prod
 ```
 
 ## Lint
 
 ```bash
 # lint code with ESLint
-npm run lint
+$ npm run lint
 ```
 
 ## Test
@@ -91,7 +91,7 @@ $ npm run test:cov
 
 ```bash
 # run lint and tests
-npm run lint
+$ npm run lint
 ```
 
 <!-- ## Docker
