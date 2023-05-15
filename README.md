@@ -4,7 +4,7 @@
 
 # Fact checking API
 
-[![users_service CI](https://github.com/rastislavkopal/nestjs-rest-api-boilerplate-mongoose/actions/workflows/users_service.yml/badge.svg)](https://github.com/rastislavkopal/nestjs-rest-api-boilerplate-mongoose/actions/workflows/users_service.yml)
+[![users_service CI](https://github.com/rastislavkopal/nestjs-rest-api-boilerplate-mongoose/actions/workflows/users_service.yml/badge.svg?branch=main)](https://github.com/rastislavkopal/nestjs-rest-api-boilerplate-mongoose/actions/workflows/users_service.yml)
 
 ## Features
 
