@@ -1,4 +1,4 @@
-@startuml
+@startuml System use cases
 left to right direction
 
 "Visitor" as Visitor

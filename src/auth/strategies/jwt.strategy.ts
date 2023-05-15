@@ -5,8 +5,8 @@ import { PassportStrategy } from '@nestjs/passport';
 import { ConfigService } from '@nestjs/config';
 import { JwtPayloadType } from '../../utils/types/auth/jwt-payload.type';
 import { OrNeverType } from '../../utils/types/or-never.type';
-import { UsersService } from 'src/users/users.service';
-import { User } from 'src/users/schemas/user.schema';
+import { UsersService } from '../../users/users.service';
+import { User } from '../../users/schemas/user.schema';
 
 @Injectable()
 export class JwtStrategy extends PassportStrategy(Strategy) {

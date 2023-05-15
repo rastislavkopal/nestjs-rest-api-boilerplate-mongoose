@@ -1,4 +1,4 @@
-@startuml
+@startuml Claim verification flow
 
 |#goldenrod|author| Author (User)
 |#tomato|expert| Expert (Journalist)

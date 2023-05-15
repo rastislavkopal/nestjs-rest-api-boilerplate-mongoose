@@ -30,7 +30,7 @@ export class User {
   lastName: string;
 
   @Prop({ type: [String], default: ['user'], required: true })
-  roles: string;
+  roles: string[];
 
   @Prop()
   picture: string;

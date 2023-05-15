@@ -28,11 +28,10 @@ import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { NullableType } from '../utils/types/nullable.type';
 import MongooseClassSerializerInterceptor from '../utils/interceptors/mongoose-class-serializer.interceptor';
-import { PaginationParams } from 'src/utils/types/pagination-params';
-import { Roles } from 'src/auth/decorators/roles.decorator';
-import { RolesGuard } from 'src/auth/guards/roles.guard';
-import { AuthGuard } from '@nestjs/passport';
-import { ParseObjectIdPipe } from 'src/utils/pipes/parse-object-id.pipe';
+import { PaginationParams } from '../utils/types/pagination-params';
+import { Roles } from '../auth/decorators/roles.decorator';
+import { RolesGuard } from '../auth/guards/roles.guard';
+import { ParseObjectIdPipe } from '../utils/pipes/parse-object-id.pipe';
 import { Types } from 'mongoose';
 import { ReplaceUserDto } from './dto/replace-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
@@ -44,14 +43,14 @@ import { LoggedUser } from './decorators/logged-user.decorator';
   path: 'users',
   version: '1',
 })
-@UseGuards(RolesGuard)
+// @UseGuards(RolesGuard)
 @UseInterceptors(MongooseClassSerializerInterceptor(User))
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
   @Post()
   @SerializeOptions({ groups: ['admin'] })
-  @UseGuards(AuthGuard('jwt'))
+  @UseGuards(RolesGuard)
   @Roles('admin')
   @ApiBearerAuth()
   @HttpCode(HttpStatus.CREATED)
@@ -61,13 +60,13 @@ export class UsersController {
 
   @Get()
   @SerializeOptions({ groups: ['admin'] })
-  @UseGuards(AuthGuard('jwt'))
+  @UseGuards(RolesGuard)
   @Roles('admin')
   @ApiBearerAuth()
   @HttpCode(HttpStatus.OK)
-  @ApiQuery({ name: 'page', required: false, type: Number, example: 1 })
+  @ApiQuery({ name: 'page', required: false, type: Number, example: 0 })
   @ApiQuery({ name: 'limit', required: false, type: Number, example: 10 })
-  async findAll(@Query() { page, limit }: PaginationParams): Promise<User[]> {
+  async list(@Query() { page, limit }: PaginationParams): Promise<User[]> {
     if (limit > 50) {
       limit = 50;
     }
@@ -90,7 +89,7 @@ export class UsersController {
   @ApiBody({ type: ReplaceUserDto })
   @ApiParam({ name: 'id', type: String, example: '645cacbfa6693d8100b2d60a' })
   @SerializeOptions({ groups: ['admin'] })
-  @UseGuards(AuthGuard('jwt'))
+  @UseGuards(RolesGuard)
   @HttpCode(HttpStatus.CREATED)
   update(
     @Param('id', new ParseObjectIdPipe()) _id: Types.ObjectId,
@@ -105,7 +104,7 @@ export class UsersController {
   @ApiBearerAuth()
   @ApiParam({ name: 'id', type: String, example: '645cacbfa6693d8100b2d60a' })
   @SerializeOptions({ groups: ['admin'] })
-  @UseGuards(AuthGuard('jwt'))
+  @UseGuards(RolesGuard)
   @Roles('admin')
   @HttpCode(HttpStatus.CREATED)
   replace(
@@ -119,7 +118,7 @@ export class UsersController {
   @Delete(':id')
   @ApiBearerAuth()
   @ApiParam({ name: 'id', type: String, example: '645cacbfa6693d8100b2d60a' })
-  @UseGuards(AuthGuard('jwt'))
+  @UseGuards(RolesGuard)
   @HttpCode(HttpStatus.NO_CONTENT)
   async deleteStudent(
     @Param('id', new ParseObjectIdPipe()) _id: Types.ObjectId,

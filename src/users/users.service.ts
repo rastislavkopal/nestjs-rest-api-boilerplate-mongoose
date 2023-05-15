@@ -1,14 +1,14 @@
 import { _, omit } from 'lodash';
 import { Model, Types } from 'mongoose';
-import { Injectable, NotFoundException, Scope } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { User, UserDocument } from './schemas/user.schema';
 import { CreateUserDto } from './dto/create-user.dto';
-import { NullableType } from 'src/utils/types/nullable.type';
+import { NullableType } from '../utils/types/nullable.type';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { ReplaceUserDto } from './dto/replace-user.dto';
 
-@Injectable({ scope: Scope.REQUEST })
+@Injectable()
 export class UsersService {
   constructor(@InjectModel(User.name) private userModel: Model<User>) {}
 

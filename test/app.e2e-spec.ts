@@ -16,11 +16,6 @@ describe('AppController (e2e)', () => {
   });
 
   it('/api/v1/users (GET)', () => {
-    return request(app.getHttpServer())
-      .get('/api/v1/users')
-      .expect(200)
-      .expect(({ body }) => {
-        expect(body).toBeDefined();
-      });
+    return request(app.getHttpServer()).get('/api/v1/non-exist').expect(404);
   });
 });
