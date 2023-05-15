@@ -14,7 +14,7 @@ env:
   JWT_SECRET: bA2xcjpf8y5aSUFsNB2qN5yymUBSs6es3qHoFpGkec75RCeBb8cpKauGefw5qy4
   JWT_EXPIRATION_MINUTES: 15
   MONGO_URI: mongodb://localhost/fact_checking_api
-  MONGO_URI_TESTS: mongodb://localhost/fact_checking_api
+  MONGO_TEST_URI: mongodb://localhost/fact_checking_api
   EMAIL_PORT: 587
   EMAIL_HOST: smtp-relay.sendinblue.com
   EMAIL_USERNAME: smtp-username
