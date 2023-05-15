@@ -10,11 +10,18 @@ on:
 
 env:
   NODE_ENV: test
-  PORT: 3000
-  JWT_SECRET: bA2xcjpf8y5aSUFsNB2qN5yymUBSs6es3qHoFpGkec75RCeBb8cpKauGefw5qy4
-  JWT_EXPIRATION_MINUTES: 15
+  APP_NAME:
+  APP_PORT: 3000
+  API_PREFIX: api
+  APP_FALLBACK_LANGUAGE: en
+  APP_HEADER_LANGUAGE: x-custom-lang
+  FRONTEND_DOMAIN: http://localhost:3000
+  BACKEND_DOMAIN: http://localhost:3000
+  AUTH_JWT_SECRET: bA2xcjpf8y5aSUFsNB2qN5yymUBSs6es3qHoFpGkec75RCeBb8cpKauGefw5qy4
+  AUTH_JWT_TOKEN_EXPIRES_IN: 15
   MONGO_URI: mongodb://localhost/fact_checking_api
   MONGO_URI_TEST: mongodb://localhost/fact_checking_api
+  MONGO_DB_NAME: fact_checking_be
   EMAIL_PORT: 587
   EMAIL_HOST: smtp-relay.sendinblue.com
   EMAIL_USERNAME: smtp-username
