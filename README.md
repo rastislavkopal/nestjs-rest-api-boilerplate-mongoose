@@ -48,6 +48,21 @@ $ npm install
 $ cp .env.example .env
 ```
 
+## Docker
+
+#### Comfortable development with docker support:
+
+```bash
+# run containers locally
+$ npm run docker:dev
+
+# run container in production
+npm run docker:prod
+
+# run tests
+npm run docker:test
+```
+
 ## Running Locally
 
 ```bash
