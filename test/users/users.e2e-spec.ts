@@ -1,109 +1,119 @@
-import { Test } from '@nestjs/testing';
-import { Connection } from 'mongoose';
-import { AppModule } from '../../src/app.module';
-import { DatabaseService } from '../../src/database/database.service';
 import * as request from 'supertest';
-import { userStub } from './stubs/user.stub';
-// import { adminStub } from './stubs/admin.stub';
-import { CreateUserDto } from 'src/users/dto/create-user.dto';
+import { dbConnection, httpServer } from '../setup';
 
 describe('Users API', () => {
-  let dbConnection: Connection;
-  let httpServer: any;
-  let app: any;
-
-  // let adminAccessToken;
-  // let userAccessToken;
-  // let dbUsers;
-  // let user: CreateUserDto = userStub();
-  // let admin: CreateUserDto;
-
-  // const password = '123456';
-  // const passwordHashed = await bcrypt.hash(password, 1);
+  let adminUser;
+  const user = {
+    email: 'user@test.com',
+    password: 'secret',
+    firstName: 'johnny',
+    lastName: 'Po',
+  };
+  let adminAccessToken: string;
+  // let userAccessToken: string;
 
   beforeAll(async () => {
-    const moduleRef = await Test.createTestingModule({
-      imports: [AppModule],
-    }).compile();
-
-    app = moduleRef.createNestApplication();
-    await app.init();
-    dbConnection = moduleRef
-      .get<DatabaseService>(DatabaseService)
-      .getDbHandle();
-    httpServer = app.getHttpServer();
-
-    // const router = httpServer._events.request._router;
-    // const availableRoutes: [] = router.stack
-    //   .map((layer) => {
-    //     if (layer.route) {
-    //       return {
-    //         route: {
-    //           path: layer.route?.path,
-    //           method: layer.route?.stack[0].method,
-    //         },
-    //       };
-    //     }
-    //   })
-    //   .filter((item) => item !== undefined);
-    // console.log(availableRoutes);
+    await dbConnection.collection('refreshtokens').deleteMany({});
+    await dbConnection.collection('users').deleteMany({});
   });
 
-  afterAll(async () => {
-    await dbConnection.collection('users').deleteMany({});
-    await app.close();
-  });
+  describe('Setup user', () => {
+    it('preregister user', async () => {
+      let res = await request(httpServer)
+        .post('/auth/register')
+        .expect(201)
+        .send({
+          email: 'admin@test.com',
+          password: 'secret',
+          firstName: 'johnny',
+          lastName: 'Po',
+        });
+      const localAccessToken = res.body.token.accessToken;
 
-  beforeEach(async () => {
-    await dbConnection.collection('users').deleteMany({});
+      await request(httpServer)
+        .get('/auth/profile')
+        .auth(localAccessToken, { type: 'bearer' })
+        .expect(200)
+        .expect(({ body }) => {
+          adminUser = body;
+        });
 
-    // user = {
-    //   email: 'martin.kov@gmail.com',
-    //   password,
-    //   firstName: 'Martin',
-    //   lastName: 'Kov',
-    // };
+      await dbConnection
+        .collection('users')
+        .updateMany({}, { $set: { roles: ['admin', 'user'] } });
 
-    // admin = {
-    //   email: 'matus.knd@gmail.com',
-    //   password,
-    //   firstName: 'Matus',
-    //   lastName: 'Knd',
-    // };
+      res = await request(httpServer).post('/auth/login').expect(201).send({
+        email: 'admin@test.com',
+        password: 'secret',
+      });
+      adminAccessToken = res.body.token.accessToken;
+    });
   });
 
   describe('POST /users', () => {
     it('should create a user', async () => {
-      const usr: CreateUserDto = userStub();
-      const response = await request(httpServer).post('/users/notfo').send(usr);
+      await request(httpServer)
+        .post('/users')
+        .auth(adminAccessToken, { type: 'bearer' })
+        .send(user)
+        .expect(201)
+        .expect(({ body }) => {
+          expect(body._id).toBeDefined();
+          expect(body.email).toBeDefined();
+          expect(body.firstName).toBeDefined();
+          expect(body.lastName).toBeDefined();
+          expect(body.name).toBeDefined();
+          expect(body.level).toBeDefined();
+          expect(body.nReviews).toBeDefined();
+          expect(body.password).not.toBeDefined();
+        });
 
-      expect(response.status).toBe(404);
-      // expect(response.body).toMatchObject();
-
-      // const user = await dbConnection
-      //   .collection('users')
-      //   .findOne({ email: userStub().email });
-      // expect(user).toMatchObject(usr);
+      // const res = await request(httpServer)
+      //   .post('/auth/login')
+      //   .expect(201)
+      //   .send({
+      //     email: user.email,
+      //     password: user.password,
+      //   });
+      // userAccessToken = res.body.token.accessToken;
     });
   });
 
-  // describe('GET /users/{:id}', () => {
-  //   it('should return an array of users', async () => {
-  //     await dbConnection.collection('users').insertOne(adminStub);
-  //     const response = await request(httpServer).get('/users');
+  describe('GET /users/{:id}', () => {
+    it('should return an array of users', async () => {
+      return await request(httpServer)
+        .get(`/users/${adminUser._id}`)
+        .auth(adminAccessToken, { type: 'bearer' })
+        .expect(200)
+        .expect(({ body }) => {
+          expect(body._id).toBeDefined();
+          expect(body.email).toBeDefined();
+          expect(body.firstName).toBeDefined();
+          expect(body.lastName).toBeDefined();
+          expect(body.name).toBeDefined();
+          expect(body.level).toBeDefined();
+          expect(body.nReviews).toBeDefined();
+          expect(body.password).not.toBeDefined();
+        });
+    });
+  });
 
-  //     expect(response.status).toBe(200);
-  //     expect(response.body).toMatchObject([userStub()]);
-  //   });
-  // });
-
-  // describe('GET /users', () => {
-  //   it('should return an array of users', async () => {
-  //     await dbConnection.collection('users').insertOne(adminStub);
-  //     const response = await request(httpServer).get('/users');
-
-  //     expect(response.status).toBe(200);
-  //     expect(response.body).toMatchObject([userStub()]);
-  //   });
-  // });
+  describe('GET /users', () => {
+    it('should return an array of users', async () => {
+      return await request(httpServer)
+        .get(`/users`)
+        .auth(adminAccessToken, { type: 'bearer' })
+        .expect(200)
+        .expect(({ body }) => {
+          expect(body[0]._id).toBeDefined();
+          expect(body[0].email).toBeDefined();
+          expect(body[0].firstName).toBeDefined();
+          expect(body[0].lastName).toBeDefined();
+          expect(body[0].name).toBeDefined();
+          expect(body[0].level).toBeDefined();
+          expect(body[0].nReviews).toBeDefined();
+          expect(body[0].password).not.toBeDefined();
+        });
+    });
+  });
 });

@@ -1,5 +1,4 @@
 import {
-  BadRequestException,
   HttpException,
   HttpStatus,
   Injectable,
@@ -74,23 +73,27 @@ export class AuthService {
         refreshToken: await this.findRefreshToken(user),
         expiresIn: new Date(new Date().getTime() + this.jwtExpires * 60000),
       },
-      user: null,
+      user: {
+        _id: user._id,
+        firstName: user.firstName,
+        lastName: user.lastName,
+        name: user.name,
+        email: user.email,
+        level: user.level,
+        roles: user.roles,
+        nReviews: user.nReviews,
+        nBeenVoted: user.nBeenVoted,
+        updatedAt: user.updatedAt,
+      },
     };
     return tokenRes;
   }
 
-  async login(
-    loginDto: AuthEmailLoginDto,
-    onlyAdmin: boolean,
-  ): Promise<AuthResponseType> {
+  async login(loginDto: AuthEmailLoginDto): Promise<AuthResponseType> {
     const user: User = await this.usersService.findByEmail(loginDto.email);
 
     if (!user) {
       throw new NotFoundException('Email not found');
-    }
-
-    if (onlyAdmin && !user.roles.includes('admin')) {
-      throw new UnauthorizedException('Not enough permissions');
     }
 
     const isValidPassword: boolean = await bcrypt.compare(
@@ -101,12 +104,10 @@ export class AuthService {
     if (!isValidPassword) {
       throw new HttpException(
         {
-          status: HttpStatus.UNPROCESSABLE_ENTITY,
-          errors: {
-            password: 'incorrectPassword',
-          },
+          statusCode: HttpStatus.UNAUTHORIZED,
+          message: 'incorrectPassword',
         },
-        HttpStatus.UNPROCESSABLE_ENTITY,
+        HttpStatus.UNAUTHORIZED,
       );
     }
 
@@ -127,13 +128,25 @@ export class AuthService {
       refreshToken: refreshTokenDto.refreshToken,
     });
     if (!refreshToken) {
-      throw new BadRequestException('Bad request');
+      throw new HttpException(
+        {
+          statusCode: HttpStatus.UNAUTHORIZED,
+          message: 'Invalid refresh token',
+        },
+        HttpStatus.UNAUTHORIZED,
+      );
     }
     const user: User = await this.usersService.findOne({
       _id: refreshToken.userId,
     });
     if (!user) {
-      throw new BadRequestException('Bad request');
+      throw new HttpException(
+        {
+          statusCode: HttpStatus.UNAUTHORIZED,
+          message: 'Invalid refresh token',
+        },
+        HttpStatus.UNAUTHORIZED,
+      );
     }
 
     return this.authTokenResponse(user);

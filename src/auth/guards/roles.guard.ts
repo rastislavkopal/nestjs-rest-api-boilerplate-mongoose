@@ -6,6 +6,7 @@ import {
 } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
 import { AuthGuard } from '@nestjs/passport';
+import { ROLES_KEY } from '../decorators/roles.decorator';
 
 @Injectable()
 export class RolesGuard extends AuthGuard('jwt') {
@@ -13,8 +14,13 @@ export class RolesGuard extends AuthGuard('jwt') {
     super();
   }
 
-  handleRequest(err, user, info: Error, context: ExecutionContext) {
-    const roles = this.reflector.get<string[]>('roles', context.getHandler());
+  canActivate(context: ExecutionContext) {
+    // Custom authentication logic here, establish session, etc
+    return super.canActivate(context);
+  }
+
+  handleRequest(err, user, info, context: ExecutionContext) {
+    const roles = this.reflector.get<string[]>(ROLES_KEY, context.getHandler());
     if (!roles) {
       return user;
     }

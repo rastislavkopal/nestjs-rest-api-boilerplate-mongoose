@@ -1,6 +1,6 @@
 import * as bcrypt from 'bcrypt';
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { now, HydratedDocument, ObjectId } from 'mongoose';
+import { now, HydratedDocument, Types } from 'mongoose';
 import { Exclude, Expose, Transform } from 'class-transformer';
 
 export type UserDocument = HydratedDocument<User>;
@@ -9,7 +9,7 @@ export type UserDocument = HydratedDocument<User>;
 export class User {
   @Expose()
   @Transform((params) => params.obj._id.toString())
-  _id: ObjectId;
+  _id: Types.ObjectId;
 
   @Prop({ required: true, unique: true, minlength: 6, maxlength: 255 })
   email: string;
@@ -51,7 +51,7 @@ export class User {
   @Prop({ default: 0 })
   nBeenVoted: number;
 
-  // @Prop({ type: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Article' }] })
+  // @Prop({ type: [ type: Types.ObjectId], ref: 'Article' } })
   // savedArticles: SavedArticle[];
 
   @Prop({ default: 1 })

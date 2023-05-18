@@ -17,8 +17,12 @@
     "test:watch": "jest --watch",
     "test:cov": "jest --coverage",
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
-    "test:e2e": "jest --config ./test/jest-e2e.json",
-    "prepare": "husky install"
+    "test:e2e": "jest --runInBand --config ./test/jest-e2e.json",
+    "prepare": "husky install",
+    "docker:dev": "docker-compose up -d && npm run start:dev",
+    "docker:down": "docker-compose down",
+    "docker:prod": "docker-compose up -d && npm run start:prod",
+    "docker:test": "docker-compose up -d && npm run test:e2e"
   },
   "dependencies": {
     "@nestjs/common": "^9.0.0",
@@ -32,8 +36,10 @@
     "bcrypt": "^5.1.0",
     "class-transformer": "^0.5.1",
     "class-validator": "^0.14.0",
+    "helmet": "^7.0.0",
     "lodash": "^4.17.21",
     "mongoose": "^7.1.0",
+    "nest-router": "^1.0.9",
     "passport": "^0.6.0",
     "passport-anonymous": "^1.0.1",
     "passport-jwt": "^4.0.1",

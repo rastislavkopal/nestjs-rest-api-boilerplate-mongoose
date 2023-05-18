@@ -1,6 +1,6 @@
 // import mongoose from 'mongoose';
 // import { User } from '../../../src/users/schemas/user.schema';
-import { CreateUserDto } from 'src/users/dto/create-user.dto';
+import { CreateUserDto } from '../../../src/users/dto/create-user.dto';
 
 export const userStub = (): CreateUserDto => {
   return {

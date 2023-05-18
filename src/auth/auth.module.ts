@@ -3,7 +3,6 @@ import { AuthService } from './auth.service';
 import { JwtModule } from '@nestjs/jwt';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { JwtStrategy } from './strategies/jwt.strategy';
-import { AnonymousStrategy } from './strategies/anonymous.strategy';
 import { UsersModule } from '../users/users.module';
 import { PassportModule } from '@nestjs/passport';
 import { AuthController } from './auth.controller';
@@ -13,6 +12,9 @@ import {
   RefreshToken,
   RefreshTokenSchema,
 } from './schemas/refresh-token.schema';
+import { APP_GUARD } from '@nestjs/core';
+import { JwtAuthGuard } from './guards/jwt-auth.guard';
+import { RolesGuard } from './guards/roles.guard';
 
 const jwtFactory = {
   imports: [ConfigModule],
@@ -38,7 +40,14 @@ const jwtFactory = {
     AuthService,
     UsersService,
     JwtStrategy,
-    AnonymousStrategy,
+    {
+      provide: APP_GUARD,
+      useClass: JwtAuthGuard,
+    },
+    {
+      provide: APP_GUARD,
+      useClass: RolesGuard,
+    },
     ConfigService,
   ],
   exports: [

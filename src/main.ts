@@ -3,6 +3,7 @@ import {
   ValidationPipe,
   VersioningType,
 } from '@nestjs/common';
+import helmet from 'helmet';
 import mongoose from 'mongoose';
 import { AppModule } from './app.module';
 import { NestFactory } from '@nestjs/core';
@@ -46,6 +47,8 @@ async function bootstrap() {
       'development',
   );
 
+  app.enableCors();
+  app.use(helmet());
   await app.listen(configService.getOrThrow('app.port', { infer: true }));
 }
 

@@ -22,12 +22,11 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
     });
   }
 
-  public async validate(payload: JwtPayloadType): Promise<OrNeverType<User>> {
+  public validate(payload: JwtPayloadType): Promise<OrNeverType<User>> {
     if (!payload._id) {
       throw new UnauthorizedException();
     }
 
-    const user = await this.usersService.findOne({ _id: payload._id });
-    return user;
+    return this.usersService.findOne({ _id: payload._id });
   }
 }

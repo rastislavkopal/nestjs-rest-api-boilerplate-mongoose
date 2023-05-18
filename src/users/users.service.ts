@@ -29,11 +29,11 @@ export class UsersService {
     return this.userModel.findById(_id).exec();
   }
 
-  async findManyWithPagination(page = 1, limit?: number): Promise<User[]> {
+  async findManyWithPagination(page = 1, perPage?: number): Promise<User[]> {
     return this.userModel
       .find()
-      .skip(page * limit)
-      .limit(limit)
+      .limit(perPage)
+      .skip(perPage * (page - 1))
       .exec();
   }
 

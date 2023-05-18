@@ -12,5 +12,5 @@ export class PaginationParams {
   @Type(() => Number)
   @IsNumber()
   @Min(1)
-  limit?: number;
+  perPage?: number;
 }
